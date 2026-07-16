@@ -14,9 +14,11 @@ quick single-purpose hacks, even for small changes.
 
 ## Commands
 
-- `npm run build` — tsup, dual ESM/CJS + `.d.ts`.
-- `npm test` / `npm run test:watch` — vitest.
-- `npm run playground` — Vite dev server (HMR) that aliases `mascot`/`mascot/react` to
+- This repo uses pnpm (`packageManager` field in `package.json`) — use `pnpm`, not `npm`,
+  for installs and scripts, so the committed `pnpm-lock.yaml` stays authoritative.
+- `pnpm run build` — tsup, dual ESM/CJS + `.d.ts`.
+- `pnpm test` / `pnpm run test:watch` — vitest.
+- `pnpm run playground` — Vite dev server (HMR) that aliases `mascot`/`mascot/react` to
   `src/`, not the built `dist/`. This is the primary tool for iterating on character art
   and animation live; use it (or a scratch Playwright page) to check changes, not just
   the built package.
@@ -40,7 +42,7 @@ quick single-purpose hacks, even for small changes.
 ## Hard rule: visually verify character/animation changes
 
 Any change to a character's `art`, `mask`, or animation frames must be visually
-confirmed (via `npm run playground` or a scratch Playwright preview page) before being
+confirmed (via `pnpm run playground` or a scratch Playwright preview page) before being
 considered complete — reasoning about the glyph strings alone has repeatedly missed real
 bugs in this project (asymmetric padding invisible at small sizes, font-rendering
 differences between Unicode block glyphs, animation frames that only break after
@@ -61,5 +63,5 @@ actually rendered it.
 
 ## Publishing status
 
-Not yet published to npm. Install via `npm install github:<owner>/<repo>` — the
-`prepare` script runs the build automatically for git-based installs.
+Not yet published to npm. Install via `npm install github:chrisrrowland/sidekick-kaiju`
+— the `prepare` script runs the build automatically for git-based installs.

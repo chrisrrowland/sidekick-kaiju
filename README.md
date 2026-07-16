@@ -15,7 +15,8 @@ The fastest way to explore mascot — browse the available characters and poses,
 theming live, and copy working code for your own project — is the playground:
 
 ```sh
-npm run playground
+pnpm install
+pnpm run playground
 ```
 
 Opens at http://localhost:5173 with hot reload.
@@ -26,7 +27,7 @@ Not yet published to npm. For now, install directly from this repo (a `prepare` 
 builds `dist/` automatically when installed this way):
 
 ```sh
-npm install github:<owner>/<repo>
+npm install github:chrisrrowland/sidekick-kaiju
 ```
 
 Once published, this section will show `npm install <package-name>` instead.

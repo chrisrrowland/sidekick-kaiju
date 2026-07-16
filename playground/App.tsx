@@ -23,15 +23,15 @@ const API_REFERENCE = apiReferenceData as ApiEntry[];
 const SLOTS = ["body", "eyes", "legs", "arms"];
 
 // Not on npm yet (see README) — every manager installs the same git ref, just with its
-// own verb. Once this is a real npm package, swap the "github:<owner>/<repo>" segment
-// for the package name here and the change is done everywhere at once.
+// own verb. Once this is a real npm package, swap the "github:..." segment for the
+// package name here and the change is done everywhere at once.
 const PACKAGE_MANAGERS = ["npm", "pnpm", "yarn", "bun"] as const;
 type PackageManager = (typeof PACKAGE_MANAGERS)[number];
 const INSTALL_COMMANDS: Record<PackageManager, string> = {
-  npm: "npm install github:<owner>/<repo>",
-  pnpm: "pnpm add github:<owner>/<repo>",
-  yarn: "yarn add github:<owner>/<repo>",
-  bun: "bun add github:<owner>/<repo>",
+  npm: "npm install github:chrisrrowland/sidekick-kaiju",
+  pnpm: "pnpm add github:chrisrrowland/sidekick-kaiju",
+  yarn: "yarn add github:chrisrrowland/sidekick-kaiju",
+  bun: "bun add github:chrisrrowland/sidekick-kaiju",
 };
 
 const REFERENCE_FONT_SIZE = 100;

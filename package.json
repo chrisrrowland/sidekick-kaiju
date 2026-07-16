@@ -4,6 +4,15 @@
   "description": "A themeable terminal-art monster mascot for any Node/React project.",
   "type": "module",
   "license": "MIT",
+  "packageManager": "pnpm@11.1.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chrisrrowland/sidekick-kaiju.git"
+  },
+  "homepage": "https://chrisrrowland.github.io/sidekick-kaiju/",
+  "bugs": {
+    "url": "https://github.com/chrisrrowland/sidekick-kaiju/issues"
+  },
   "files": [
     "dist",
     "styles"
@@ -29,9 +38,9 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "docs:api": "node playground/scripts/generate-api-reference.mjs",
-    "preplayground": "npm run docs:api",
+    "preplayground": "pnpm run docs:api",
     "playground": "vite",
-    "prebuild:playground": "npm run docs:api",
+    "prebuild:playground": "pnpm run docs:api",
     "build:playground": "vite build",
     "preview:playground": "vite preview --base=/sidekick-kaiju/",
     "test": "vitest run",
