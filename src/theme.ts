@@ -1,7 +1,7 @@
 import type { Theme } from "./types.js";
 
 /**
- * The published theming contract: every CSS custom property `mascot.css` consumes.
+ * The published theming contract: every CSS custom property `sidekick.css` consumes.
  *
  * @remarks
  * Exported as constants so hosts can reference the real names instead of copying
@@ -15,39 +15,39 @@ import type { Theme } from "./types.js";
  * @category Advanced
  */
 export const CSS_VARS = {
-  color: "--mascot-color",
-  background: "--mascot-bg",
-  fontFamily: "--mascot-font-family",
-  fontSize: "--mascot-font-size",
-  lineHeight: "--mascot-line-height",
+  color: "--sidekick-color",
+  background: "--sidekick-bg",
+  fontFamily: "--sidekick-font-family",
+  fontSize: "--sidekick-font-size",
+  lineHeight: "--sidekick-line-height",
 } as const;
 
 /**
- * Name of the per-slot color override variable, e.g. `--mascot-eyes-color`.
+ * Name of the per-slot color override variable, e.g. `--sidekick-eyes-color`.
  *
  * @example
  * ```ts
- * slotColorVar("eyes"); // "--mascot-eyes-color"
+ * slotColorVar("eyes"); // "--sidekick-eyes-color"
  * ```
  *
  * @category Advanced
  */
 export function slotColorVar(slot: string): string {
-  return `--mascot-${slot}-color`;
+  return `--sidekick-${slot}-color`;
 }
 
 /**
  * Converts a `Theme` into a CSS custom property map.
  *
  * @remarks
- * What `<Mascot theme>` uses internally to build its inline `style`; reach for it
+ * What `<Sidekick theme>` uses internally to build its inline `style`; reach for it
  * directly outside React (Vue, Svelte, ...) when `applyTheme`'s element-mutation isn't
  * the right shape for your framework.
  *
  * @example
  * ```ts
  * themeToStyle({ color: "#39ff88", fontSize: "48px" });
- * // { "--mascot-color": "#39ff88", "--mascot-font-size": "48px" }
+ * // { "--sidekick-color": "#39ff88", "--sidekick-font-size": "48px" }
  * ```
  *
  * @category Advanced

@@ -12,7 +12,7 @@ checklist and mental model; `verify-mascot-art` is the rendering/verification me
 
 - A `Character` (`src/types.ts`) is `{ name, legend, poses }`. `legend` maps single
   mask characters (e.g. `b`, `e`, `l`, `a`) to slot names (`"body"`, `"eyes"`, ...).
-  Slot names are theming hooks — `styles/mascot.css` and host `classNames`/CSS vars key
+  Slot names are theming hooks — `styles/sidekick.css` and host `classNames`/CSS vars key
   off them, so pick slots by *what a consumer would want to style independently*, not
   by anatomical literalism (a tail that never moves and is never re-themed separately
   from the body doesn't need its own slot).
@@ -40,7 +40,7 @@ checklist and mental model; `verify-mascot-art` is the rendering/verification me
    genuinely has analogous parts (keeps cross-character theming consistent for
    consumers who style "eyes" once and expect it to apply everywhere). Only introduce a
    new slot name if the part needs independent styling — and if you do, add a
-   `[data-slot="..."]` rule to `styles/mascot.css` alongside the existing ones (a slot
+   `[data-slot="..."]` rule to `styles/sidekick.css` alongside the existing ones (a slot
    with no CSS rule still renders, just via the generic `[data-slot]` fallback — that's
    fine as a starting point but check whether the new part actually needs its own rule).
 3. **Build the `base` pose first**, as a single static frame. Get this visually right
@@ -56,12 +56,12 @@ checklist and mental model; `verify-mascot-art` is the rendering/verification me
 5. **Register the character** in `src/characters/index.ts` (import + add to the
    `characters` record + re-export), so `getCharacter`/`poseNames`/`slotNames`/
    `describeCharacter` all pick it up automatically — don't maintain a second list.
-6. **Run `npm test`.** `buildRenderModel.test.ts` iterates every frame of every pose of
+6. **Run `pnpm test`.** `buildRenderModel.test.ts` iterates every frame of every pose of
    every registered character checking art/mask dimension consistency — this will catch
    width mismatches you introduced, but it cannot catch whether the art *looks* right.
 7. **Visually verify** — invoke `verify-mascot-art` for every frame and every pose,
    including switching between poses/characters rapidly. This is not optional; do not
    report the character as done without having rendered it.
-8. Check the playground (`npm run playground`) picks up the new character/poses in its
+8. Check the playground (`pnpm run playground`) picks up the new character/poses in its
    character/pose pickers without further wiring — if it doesn't, something is missing
    from step 5, not a playground-specific fix.

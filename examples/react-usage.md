@@ -1,13 +1,13 @@
-# Using `mascot/react`
+# Using `sidekick-kaiju/react`
 
 ```tsx
-import { Mascot } from "mascot/react";
-import "mascot/styles.css";
+import { Sidekick } from "sidekick-kaiju/react";
+import "sidekick-kaiju/styles.css";
 import styles from "./widget.module.css";
 
 export function AssistantAvatar() {
   return (
-    <Mascot
+    <Sidekick
       character="monster"
       className={styles.avatar}
       classNames={{ eyes: styles.glow }}
@@ -17,34 +17,34 @@ export function AssistantAvatar() {
 }
 ```
 
-- `className` sets a class on the root wrapper, in addition to the base `mascot` class.
+- `className` sets a class on the root wrapper, in addition to the base `sidekick` class.
 - `classNames` maps slot names (`body`, `eyes`, `legs`) to classes your app already has —
   no new CSS required.
-- `theme` sets CSS custom properties (`--mascot-color`, `--mascot-eyes-color`, ...) inline,
+- `theme` sets CSS custom properties (`--sidekick-color`, `--sidekick-eyes-color`, ...) inline,
   for cases where you'd rather pass a color than define a class.
 
-If you don't want the React wrapper, `useMascot(character, pose)` returns the same render
-model `Mascot` uses, so you can render your own markup:
+If you don't want the React wrapper, `useSidekick(character, pose)` returns the same render
+model `Sidekick` uses, so you can render your own markup:
 
 ```tsx
-import { useMascot } from "mascot/react";
+import { useSidekick } from "sidekick-kaiju/react";
 ```
 
 ## Poses & animation
 
-`useMascotPose` tracks a pose name with an optional timed revert, decoupled from
-rendering — compose it with `<Mascot pose>` or `useMascot`:
+`useSidekickPose` tracks a pose name with an optional timed revert, decoupled from
+rendering — compose it with `<Sidekick pose>` or `useSidekick`:
 
 ```tsx
-import { Mascot, useMascotPose } from "mascot/react";
-import { monster, poseNames } from "mascot";
+import { Sidekick, useSidekickPose } from "sidekick-kaiju/react";
+import { monster, poseNames } from "sidekick-kaiju";
 
 const P = poseNames(monster); // { base: "base", step: "step", ... } — no hardcoded strings
 
 function Widget() {
-  const [pose, setPose, speed] = useMascotPose("base", "monster");
+  const [pose, setPose, speed] = useSidekickPose("base", "monster");
   return (
-    <Mascot
+    <Sidekick
       character="monster"
       pose={pose}
       speed={speed}
@@ -54,23 +54,23 @@ function Widget() {
 }
 ```
 
-`<Mascot>` forwards extra props like `onClick` straight to its root `<div>`, so it
+`<Sidekick>` forwards extra props like `onClick` straight to its root `<div>`, so it
 behaves like any other element for event handlers and ARIA attributes.
 
 Omit `duration` to hold a pose indefinitely, or pass `{ iterations: 2 }` to play through
 a pose's frames twice before reverting — reverts cleanly on a loop boundary instead of an
 arbitrary wall-clock time, unlike `duration` (`{ iterations: 1 }` is "play once"). Pass
-`useMascotPose`'s second argument (`character`) to use `iterations`, since it needs the
+`useSidekickPose`'s second argument (`character`) to use `iterations`, since it needs the
 character's frame durations to know how long that takes. `{ speed: 0.5 }` plays every
 frame of that invocation at twice the duration (`2` for half); `setPose("wink", {
-iterations: 2, speed: 0.5 })` is two slow-motion blinks. `useMascotPose` returns the
-active `speed` as its third value — pass it to `<Mascot speed>` (shown above) so the
+iterations: 2, speed: 0.5 })` is two slow-motion blinks. `useSidekickPose` returns the
+active `speed` as its third value — pass it to `<Sidekick speed>` (shown above) so the
 render actually reflects it; it resets to `1` once the pose reverts. See the main
 README's "Poses & animation" section for the vanilla-DOM equivalent (`animatePose`).
 
 ## Wrapping the core for another framework
 
-`mascot/react` is a thin layer over the framework-agnostic core. The same pattern works
+`sidekick-kaiju/react` is a thin layer over the framework-agnostic core. The same pattern works
 for Vue, Svelte, Solid, etc.:
 
 1. Call `buildRenderModel(getPose(character, poseName).frames[frameIndex], character.legend)`

@@ -4,7 +4,7 @@ import type { Cell, CellRun } from "./types.js";
  * Groups consecutive cells in a row that share a slot into single runs.
  *
  * @remarks
- * What both `<Mascot>` and `renderToElement`/`renderToHTMLString` use internally to
+ * What both `<Sidekick>` and `renderToElement`/`renderToHTMLString` use internally to
  * turn a render-model row into `<span data-slot="...">` runs instead of one element per
  * character. Reach for it directly only when writing a custom renderer.
  *

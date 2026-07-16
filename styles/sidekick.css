@@ -1,0 +1,53 @@
+.sidekick {
+  --sidekick-color: currentColor;
+  --sidekick-bg: transparent;
+  --sidekick-font-family: "Cascadia Code", "Fira Code", Menlo, Consolas, monospace;
+  --sidekick-font-size: 16px;
+  --sidekick-line-height: 1.15;
+
+  display: inline-block;
+  background: var(--sidekick-bg);
+}
+
+.sidekick__art {
+  margin: 0;
+  padding: 0;
+  color: var(--sidekick-color);
+  font-family: var(--sidekick-font-family);
+  font-size: var(--sidekick-font-size);
+  line-height: var(--sidekick-line-height);
+  white-space: pre;
+}
+
+/*
+ * Per-slot color overrides, e.g. --sidekick-eyes-color, --sidekick-body-color.
+ * Wrapped in :where() so these rules carry zero specificity — any class a host
+ * app passes via `classNames` wins outright, with no !important tug-of-war.
+ */
+:where(.sidekick__art [data-slot]) {
+  color: var(--sidekick-color);
+}
+
+:where(.sidekick__art [data-slot="body"]) {
+  color: var(--sidekick-body-color, var(--sidekick-color));
+}
+
+/*
+ * Eyes are ~3/4-filled corner glyphs (▛/▜) doing double duty as the head's rounded
+ * corner shape — coloring the glyph itself would recolor most of that corner ("eye
+ * shadow"). Instead, the glyph blends into the body color and --sidekick-eyes-color
+ * fills the *background*, which only shows through the small missing-corner cutout —
+ * giving a small dot instead of a big colored patch.
+ */
+:where(.sidekick__art [data-slot="eyes"]) {
+  color: var(--sidekick-body-color, var(--sidekick-color));
+  background-color: var(--sidekick-eyes-color, transparent);
+}
+
+:where(.sidekick__art [data-slot="legs"]) {
+  color: var(--sidekick-legs-color, var(--sidekick-color));
+}
+
+:where(.sidekick__art [data-slot="arms"]) {
+  color: var(--sidekick-arms-color, var(--sidekick-color));
+}

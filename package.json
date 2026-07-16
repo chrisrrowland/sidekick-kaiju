@@ -1,7 +1,7 @@
 {
-  "name": "mascot",
-  "version": "0.1.0",
-  "description": "A themeable terminal-art monster mascot for any Node/React project.",
+  "name": "sidekick-kaiju",
+  "version": "0.2.0",
+  "description": "A themeable terminal-art monster sidekick for any web project — plain JS or React.",
   "type": "module",
   "license": "MIT",
   "packageManager": "pnpm@11.1.1",
@@ -28,7 +28,7 @@
       "import": "./dist/react/index.js",
       "require": "./dist/react/index.cjs"
     },
-    "./styles.css": "./styles/mascot.css"
+    "./styles.css": "./styles/sidekick.css"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

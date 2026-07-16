@@ -25,14 +25,14 @@ function escapeHtml(text: string): string {
  * @example
  * ```ts
  * const model = buildRenderModel(getPose(character, "base").frames[0], character.legend);
- * renderToHTMLString(model); // '<div class="mascot"><pre class="mascot__art">...'
+ * renderToHTMLString(model); // '<div class="sidekick"><pre class="sidekick__art">...'
  * ```
  *
  * @category Advanced
  */
 export function renderToHTMLString(model: RenderModel, options: RenderOptions = {}): string {
   const { classNames = {} } = options;
-  const rootClass = ["mascot", classNames.root].filter(Boolean).join(" ");
+  const rootClass = ["sidekick", classNames.root].filter(Boolean).join(" ");
 
   const lines = model.rows.map((row) =>
     toRuns(row)
@@ -46,7 +46,7 @@ export function renderToHTMLString(model: RenderModel, options: RenderOptions = 
       .join(""),
   );
 
-  return `<div class="${rootClass}"><pre class="mascot__art">${lines.join("\n")}</pre></div>`;
+  return `<div class="${rootClass}"><pre class="sidekick__art">${lines.join("\n")}</pre></div>`;
 }
 
 /**
@@ -72,11 +72,11 @@ export function renderToElement(
   const { classNames = {} } = options;
 
   target.replaceChildren();
-  target.classList.add("mascot");
+  target.classList.add("sidekick");
   if (classNames.root) target.classList.add(classNames.root);
 
   const pre = document.createElement("pre");
-  pre.className = "mascot__art";
+  pre.className = "sidekick__art";
 
   model.rows.forEach((row, rowIndex) => {
     if (rowIndex > 0) pre.appendChild(document.createTextNode("\n"));
@@ -124,7 +124,7 @@ export interface PoseController {
 }
 
 /**
- * Vanilla-DOM equivalent of the React `useMascot` + `useMascotPose` pair.
+ * Vanilla-DOM equivalent of the React `useSidekick` + `useSidekickPose` pair.
  *
  * @remarks
  * Renders `character`'s `poseName` into `target` (via `renderToElement`), animating

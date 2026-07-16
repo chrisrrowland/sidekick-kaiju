@@ -53,7 +53,7 @@ export function buildRenderModel(frame: Frame, legend: Record<string, string> = 
  * of each frame being cropped to its own tightest box.
  *
  * @remarks
- * `animatePose` and `useMascot`/`<Mascot>` call this internally so a pose's frames
+ * `animatePose` and `useSidekick`/`<Sidekick>` call this internally so a pose's frames
  * stay in one consistent frame of reference — reach for it directly only if you're
  * driving frame changes yourself instead of through those.
  *

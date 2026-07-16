@@ -2,7 +2,7 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// Dev playground only: aliases "mascot" to source so edits in src/ hot-reload
+// Dev playground only: aliases "sidekick-kaiju" to source so edits in src/ hot-reload
 // instantly, without needing `npm run build` first.
 export default defineConfig(({ command }) => ({
   root: "playground",
@@ -16,9 +16,9 @@ export default defineConfig(({ command }) => ({
   plugins: [react()],
   resolve: {
     alias: {
-      "mascot/react": fileURLToPath(new URL("./src/react/index.tsx", import.meta.url)),
-      "mascot/styles.css": fileURLToPath(new URL("./styles/mascot.css", import.meta.url)),
-      mascot: fileURLToPath(new URL("./src/index.ts", import.meta.url)),
+      "sidekick-kaiju/react": fileURLToPath(new URL("./src/react/index.tsx", import.meta.url)),
+      "sidekick-kaiju/styles.css": fileURLToPath(new URL("./styles/sidekick.css", import.meta.url)),
+      "sidekick-kaiju": fileURLToPath(new URL("./src/index.ts", import.meta.url)),
     },
   },
   server: {

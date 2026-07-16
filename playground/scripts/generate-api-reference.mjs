@@ -12,7 +12,7 @@ const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
 const outputPath = fileURLToPath(new URL("../api-reference.generated.json", import.meta.url));
 
 // Everything except interfaces/type aliases/namespaces — i.e. the callable surface
-// (functions, the Mascot component, hooks) and simple constant exports (CSS_VARS),
+// (functions, the Sidekick component, hooks) and simple constant exports (CSS_VARS),
 // not the type-only exports consumers import separately for annotations.
 const INCLUDED_KINDS = ReflectionKind.Function | ReflectionKind.Variable;
 

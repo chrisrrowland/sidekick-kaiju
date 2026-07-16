@@ -28,10 +28,10 @@ transitions. Always render the actual change before calling it done.
    parts landing on the same column (a real collision, not just a design choice), or a
    part drifting outside the character's silhouette over the course of the cycle.
 3. Once a candidate looks right in isolation, wire it into the real character file
-   (`src/characters/*.ts`), rebuild (`npm run build`), and confirm `npm test` still
+   (`src/characters/*.ts`), rebuild (`pnpm run build`), and confirm `pnpm test` still
    passes (the dimension tests iterate every frame of every pose automatically).
-4. Verify it live: run/attach to `npm run playground`, trigger the pose via its button,
-   and poll the rendered `.mascot__art` textContent (or screenshot) across multiple
+4. Verify it live: run/attach to `pnpm run playground`, trigger the pose via its button,
+   and poll the rendered `.sidekick__art` textContent (or screenshot) across multiple
    frames to confirm the live, HMR'd result matches what was previewed in isolation —
    the built package can behave differently than a scratch page (e.g. React StrictMode
    double-rendering effects only manifest in the real component tree).
