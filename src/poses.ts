@@ -5,7 +5,7 @@ import type { Character, CharacterSummary, Pose } from "./types.js";
  *
  * @remarks
  * Throws with the list of the character's available pose names on a miss, mirroring
- * `getCharacter`'s error message shape. Most callers reach `animatePose`/`useMascot`
+ * `getCharacter`'s error message shape. Most callers reach `animatePose`/`useSidekick`
  * instead, which call this internally — use it directly when you need a pose's raw
  * `frames`/`frameDurations` without rendering it.
  *

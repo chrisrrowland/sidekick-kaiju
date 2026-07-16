@@ -47,7 +47,7 @@ export interface CellRun {
 
 /**
  * Maps slot names (plus the special "root" key) to classes the host app already
- * owns, so parts of the mascot can be styled without inventing new classes.
+ * owns, so parts of the character can be styled without inventing new classes.
  */
 export interface ClassNames {
   root?: string;

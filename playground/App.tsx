@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
-import { Mascot, useMascotPose } from "mascot/react";
-import { characters, poseNames } from "mascot";
+import { Sidekick, useSidekickPose } from "sidekick-kaiju/react";
+import { characters, poseNames } from "sidekick-kaiju";
 import apiReferenceData from "./api-reference.generated.json";
 import "./App.css";
 
@@ -82,10 +82,10 @@ function FitBox({ character, size }: { character: string; size: number }) {
     <div className="pg-fitbox-box" style={{ width: size, height: size }}>
       <div style={{ position: "absolute", visibility: "hidden", pointerEvents: "none" }}>
         <div ref={measureRef} style={{ display: "inline-block" }}>
-          <Mascot character={character} theme={{ fontSize: `${REFERENCE_FONT_SIZE}px` }} />
+          <Sidekick character={character} theme={{ fontSize: `${REFERENCE_FONT_SIZE}px` }} />
         </div>
       </div>
-      <Mascot character={character} theme={{ color: "#f3e8d2", fontSize: `${fontSize}px` }} />
+      <Sidekick character={character} theme={{ color: "#f3e8d2", fontSize: `${fontSize}px` }} />
     </div>
   );
 }
@@ -100,7 +100,7 @@ interface SnippetProps {
   hostClassSlot: string;
 }
 
-/** Renders the current control state back as the `<Mascot>` call that produces it. */
+/** Renders the current control state back as the `<Sidekick>` call that produces it. */
 function reactUsageSnippet(props: SnippetProps): string {
   const { character, pose, color, fontSize, slotColors, useHostClass, hostClassSlot } = props;
   const themeParts = [`color: "${color}"`, `fontSize: "${fontSize}px"`];
@@ -108,10 +108,10 @@ function reactUsageSnippet(props: SnippetProps): string {
     themeParts.push(`slots: ${JSON.stringify(slotColors)}`);
   }
   const lines = [
-    `import { Mascot } from "mascot/react";`,
-    `import "mascot/styles.css";`,
+    `import { Sidekick } from "sidekick-kaiju/react";`,
+    `import "sidekick-kaiju/styles.css";`,
     "",
-    `<Mascot`,
+    `<Sidekick`,
     `  character="${character}"`,
     pose !== "base" ? `  pose="${pose}"` : undefined,
     `  theme={{ ${themeParts.join(", ")} }}`,
@@ -122,9 +122,9 @@ function reactUsageSnippet(props: SnippetProps): string {
 }
 
 /**
- * The framework-agnostic equivalent of reactUsageSnippet — `mascot` (no "/react") has no
- * runtime dependencies at all; `mascot/react` is an optional thin layer on top of it, not
- * the only way in. animatePose is the vanilla stand-in for useMascotPose: same
+ * The framework-agnostic equivalent of reactUsageSnippet — `sidekick-kaiju` (no "/react")
+ * has no runtime dependencies at all; `sidekick-kaiju/react` is an optional thin layer on
+ * top of it, not the only way in. animatePose is the vanilla stand-in for useSidekickPose: same
  * duration/iterations/speed options, just a returned controller instead of hook state.
  */
 function vanillaUsageSnippet(props: SnippetProps): string {
@@ -134,8 +134,8 @@ function vanillaUsageSnippet(props: SnippetProps): string {
     themeParts.push(`slots: ${JSON.stringify(slotColors)}`);
   }
   const lines = [
-    `import { getCharacter, animatePose, applyTheme } from "mascot";`,
-    `import "mascot/styles.css";`,
+    `import { getCharacter, animatePose, applyTheme } from "sidekick-kaiju";`,
+    `import "sidekick-kaiju/styles.css";`,
     "",
     `const el = document.getElementById("app");`,
     `applyTheme(el, { ${themeParts.join(", ")} });`,
@@ -155,11 +155,11 @@ function vanillaUsageSnippet(props: SnippetProps): string {
 
 // Illustrative — not derived from playground state like the other snippets. The point
 // isn't this exact rule set, it's that setPose is a plain function you call from
-// wherever your own event source lives, not something wired to a click on the mascot.
+// wherever your own event source lives, not something wired to a click on the sidekick.
 const TRIGGER_SNIPPET = [
-  `import { Mascot, useMascotPose } from "mascot/react";`,
+  `import { Sidekick, useSidekickPose } from "sidekick-kaiju/react";`,
   "",
-  `const [pose, setPose, speed] = useMascotPose("base", "monster");`,
+  `const [pose, setPose, speed] = useSidekickPose("base", "monster");`,
   "",
   `// Anywhere in your own code — a websocket handler, a state machine,`,
   `// any event source. setPose isn't tied to a click.`,
@@ -173,7 +173,7 @@ const TRIGGER_SNIPPET = [
   `  }`,
   `});`,
   "",
-  `<Mascot character="monster" pose={pose} speed={speed} />`,
+  `<Sidekick character="monster" pose={pose} speed={speed} />`,
 ].join("\n");
 
 // The three literal values the [ react to app state ] input actually recognizes
@@ -211,7 +211,7 @@ function defaultHostClassCss(slot: string): string {
       "   included — so it would cycle the glyph's own color too, not just the",
       "   background peeking through the notch. Animating background-color",
       "   directly keeps the change confined to that property, so only the",
-      "   notch's color moves and the ink stays exactly as mascot.css set it. */",
+      "   notch's color moves and the ink stays exactly as sidekick.css set it. */",
       "@keyframes glow-shift {",
       "  0%, 100% { background-color: #ff2fd0; }",
       "  33% { background-color: #2fd0ff; }",
@@ -281,10 +281,10 @@ function ApiModuleSection({ title, entries }: { title: string; entries: ApiEntry
   );
 }
 
-function FooterMascot() {
+function FooterSidekick() {
   const reducedMotion = usePrefersReducedMotion();
   return (
-    <Mascot
+    <Sidekick
       character="monster"
       pose={reducedMotion ? "base" : "step"}
       theme={{ color: "var(--phosphor-dim)", fontSize: "14px" }}
@@ -294,7 +294,7 @@ function FooterMascot() {
 
 export function App() {
   const [character, setCharacter] = useState("monster");
-  const [pose, setPose, activeSpeed] = useMascotPose("base", character);
+  const [pose, setPose, activeSpeed] = useSidekickPose("base", character);
   const [iterationsInput, setIterationsInput] = useState(2);
   const [speedInput, setSpeedInput] = useState(0.5);
   const posesForCharacter = Object.keys(characters[character].poses);
@@ -319,9 +319,9 @@ export function App() {
   }
   const [apiTab, setApiTab] = useState<"common" | "advanced">("common");
 
-  // Not part of the mascot's own UI — stands in for an arbitrary external event source
+  // Not part of the sidekick's own UI — stands in for an arbitrary external event source
   // (a websocket message, an OTEL span, ...). The point is that setPose gets called from
-  // here, nowhere near a click handler on <Mascot> itself.
+  // here, nowhere near a click handler on <Sidekick> itself.
   function handleEventText(value: string) {
     setEventText(value);
     const P = poseNames(characters[character]);
@@ -340,17 +340,23 @@ export function App() {
   return (
     <div className="pg-page">
       <main className="pg-shell">
-        <h1 className="pg-sr-only">mascot playground — try the library live before you install it</h1>
+        <h1 className="pg-sr-only">
+          Sidekick playground — try the library live before you install it
+        </h1>
         <div className="pg-titlebar">
           <div className="pg-dots">
             <span />
             <span />
             <span />
           </div>
-          <span className="pg-titlebar-path">~/mascot</span>
+          <span className="pg-titlebar-path">~/sidekick-kaiju</span>
         </div>
 
         <div className="pg-hero">
+          <div className="pg-brand-row">
+            <p className="pg-brand-title">SIDEKICK</p>
+            <p className="pg-brand-acronym">Sidekick Is Dynamic Entity Kit Crafting Kaiju</p>
+          </div>
           <div className="pg-btn-group">
             {PACKAGE_MANAGERS.map((pm) => (
               <button
@@ -411,11 +417,11 @@ export function App() {
             </button>
           </div>
           <p className="pg-tagline">
-            Terminal-art creatures for any Node or React app — a zero-dependency core, an
-            optional React wrapper, and a theming contract built for apps that already
-            ship their own CSS. Fully typed either way; plain JS works too, same code
-            minus the type annotations. Everything below is the real library, running
-            live.
+            Terminal-art creatures for any web project — plain HTML/JS, or React — a
+            zero-dependency core, an optional React wrapper, and a theming contract built
+            for apps that already ship their own CSS. Fully typed either way; vanilla JS
+            works too, same code minus the type annotations. Everything below is the real
+            library, running live.
           </p>
           <p className="pg-caveat">
             Not on npm yet — installs straight from this repo; see the README for details.
@@ -425,7 +431,7 @@ export function App() {
         <div className="pg-main">
           <div className="pg-preview">
             <div className="pg-preview-stage" style={{ background }}>
-              <Mascot
+              <Sidekick
                 character={character}
                 pose={pose}
                 speed={activeSpeed}
@@ -468,9 +474,9 @@ export function App() {
               <p className="pg-section-caption" style={{ marginTop: 0 }}>
                 Every pose button above happens to call <code>setPose</code> from a
                 click handler, but that's incidental — it's just a function, not
-                something wired to the mascot's own UI. Typing below calls the exact
+                something wired to the sidekick's own UI. Typing below calls the exact
                 same <code>setPose</code> you'd call from a websocket handler, a state
-                machine, or any other event source — watch the mascot above react.{" "}
+                machine, or any other event source — watch the sidekick above react.{" "}
                 <span style={{ color: "var(--phosphor)" }}>↑</span>
               </p>
               <div className="pg-field" style={{ marginTop: "0.7rem" }}>
@@ -604,7 +610,7 @@ export function App() {
               <div className="pg-swatch-row" style={{ marginTop: "0.5rem" }}>
                 <input
                   type="color"
-                  aria-label="mascot color"
+                  aria-label="sidekick color"
                   value={color}
                   onChange={(e) => setColor(e.target.value)}
                 />
@@ -697,7 +703,7 @@ export function App() {
               </label>
               <p className="pg-section-caption">
                 Hand any part its own class name to attach real CSS — animation,
-                gradients, glow, anything your app already ships. mascot never reads the
+                gradients, glow, anything your app already ships. sidekick-kaiju never reads the
                 rule, it only stamps the class onto the part you pick. The textarea below
                 stands in for a stylesheet you'd normally ship separately — switching
                 parts swaps in a matching example; edit it and watch the change live.
@@ -716,7 +722,7 @@ export function App() {
         <div className="pg-apisheet">
           <span className="pg-section-title">[ api ]</span>
           <p className="pg-section-caption" style={{ marginTop: 0, marginBottom: "1rem" }}>
-            Every function <code>mascot</code> and <code>mascot/react</code> export,
+            Every function <code>sidekick-kaiju</code> and <code>sidekick-kaiju/react</code> export,
             generated straight from each one's doc comment in <code>src/</code>, so it
             can't drift the way a hand-maintained list could. <strong>common</strong> is
             the handful you'll reach for first; <strong>advanced</strong> isn't
@@ -742,13 +748,13 @@ export function App() {
             </button>
           </div>
           <ApiModuleSection
-            title="mascot — framework-agnostic core"
+            title="sidekick-kaiju — framework-agnostic core"
             entries={API_REFERENCE.filter(
               (entry) => entry.module === "core" && entry.common === (apiTab === "common"),
             )}
           />
           <ApiModuleSection
-            title="mascot/react"
+            title="sidekick-kaiju/react"
             entries={API_REFERENCE.filter(
               (entry) => entry.module === "react" && entry.common === (apiTab === "common"),
             )}
@@ -788,8 +794,8 @@ export function App() {
         </div>
 
         <div className="pg-footer">
-          <FooterMascot />
-          <span>made with mascot · MIT licensed</span>
+          <FooterSidekick />
+          <span>made with sidekick-kaiju · MIT licensed</span>
         </div>
       </main>
 

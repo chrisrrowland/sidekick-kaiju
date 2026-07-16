@@ -4,7 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-`mascot` is a themeable terminal-art monster/creature library: a framework-agnostic
+`sidekick-kaiju` (branded "Sidekick" — *Sidekick Is Dynamic Entity Kit Crafting Kaiju*)
+is a themeable terminal-art monster/creature library: a framework-agnostic
 core (`src/`, zero runtime dependencies) plus a thin React wrapper (`src/react/`).
 Although the author is currently the primary (maybe only) consumer, this is meant to be
 built and maintained as a genuinely well-architected, flexible npm library — favor
@@ -18,7 +19,7 @@ quick single-purpose hacks, even for small changes.
   for installs and scripts, so the committed `pnpm-lock.yaml` stays authoritative.
 - `pnpm run build` — tsup, dual ESM/CJS + `.d.ts`.
 - `pnpm test` / `pnpm run test:watch` — vitest.
-- `pnpm run playground` — Vite dev server (HMR) that aliases `mascot`/`mascot/react` to
+- `pnpm run playground` — Vite dev server (HMR) that aliases `sidekick-kaiju`/`sidekick-kaiju/react` to
   `src/`, not the built `dist/`. This is the primary tool for iterating on character art
   and animation live; use it (or a scratch Playwright page) to check changes, not just
   the built package.
@@ -35,7 +36,7 @@ quick single-purpose hacks, even for small changes.
 - Build character frames with the `frame()` helper (`src/characters/frame.ts`), which
   bundles `art`+`mask` (and callers pair a `duration`) per frame instead of parallel
   arrays — parallel arrays risk `art`/`mask`/duration arrays silently desyncing in length.
-- Theming: per-slot CSS rules in `styles/mascot.css` are wrapped in `:where(...)` so they
+- Theming: per-slot CSS rules in `styles/sidekick.css` are wrapped in `:where(...)` so they
   carry zero specificity — any class a host passes via `classNames` wins outright, no
   `!important` needed.
 

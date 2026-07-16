@@ -28,7 +28,7 @@ export function getCharacter(name: string): Character {
   const character = characters[name];
   if (!character) {
     const available = Object.keys(characters).join(", ");
-    throw new Error(`Unknown mascot character "${name}". Available: ${available}`);
+    throw new Error(`Unknown character "${name}". Available: ${available}`);
   }
   return character;
 }

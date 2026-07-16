@@ -1,6 +1,6 @@
 /*
  * Playground chrome: a simulated terminal window. All type uses the same monospace
- * stack mascot.css itself defaults to (see --mascot-font-family) — the page's own
+ * stack sidekick.css itself defaults to (see --sidekick-font-family) — the page's own
  * voice is the product's voice, not a separate marketing skin.
  */
 
@@ -100,6 +100,29 @@ body {
 .pg-hero {
   padding: 2rem 1.5rem 1.5rem;
   border-bottom: 1px solid var(--rule);
+}
+
+.pg-brand-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 0.85rem;
+}
+
+.pg-brand-title {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--phosphor);
+}
+
+.pg-brand-acronym {
+  margin: 0;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--text-dim);
 }
 
 .pg-hero-command-row {

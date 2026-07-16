@@ -73,7 +73,7 @@ export function trimRenderModel(model: RenderModel): RenderModel {
  * shifting an otherwise solid/symmetric shape sideways (or up/down): trimmed
  * independently, each frame re-crops to the same tightest box regardless of the
  * shift, silently erasing the very motion the frames exist to show. `animatePose` and
- * `useMascot`/`<Mascot>` already call this (via `buildPoseRenderModels`) so every
+ * `useSidekick`/`<Sidekick>` already call this (via `buildPoseRenderModels`) so every
  * frame of a pose shares one consistent frame of reference — reach for it directly
  * only if you're building `RenderModel`s by hand instead of from a `Pose`.
  *

@@ -8,7 +8,7 @@ const HEAD_MASK = " bebbbeb ";
 // Winking right eye: the ▜ corner glyph that reads as the open eye is swapped for a
 // plain █, blending that pixel into the solid head silhouette — the same trick as a
 // sprite's eye pixel recoloring to match its lid when closed. The mask keeps that cell
-// tagged "eyes" (not "body") even though it's visually blended: `mascot.css`'s default
+// tagged "eyes" (not "body") even though it's visually blended: `sidekick.css`'s default
 // eyes rule colors the glyph itself body-color, so a solid █ still blends in on its own
 // — no need to relabel the slot for that. Keeping the slot stable also matters for
 // consumers who put a host-owned class/animation on the eyes slot (see the playground's

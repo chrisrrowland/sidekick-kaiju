@@ -14,7 +14,7 @@ const SHOULDER_MASK = "   bbbbbbbbbbbbbb   ";
 
 // Eyes are plain gaps (space glyphs) rather than a glyph like monster/dino's corner
 // notches — there's nothing to color, so the "eyes" slot here only matters for the
-// background-color half of mascot.css's eyes rule (a themed host sees two solid eye
+// background-color half of sidekick.css's eyes rule (a themed host sees two solid eye
 // windows; the default is transparent, same as leaving them untouched).
 const EYES_ART = "   ███  ████  ███   ";
 const EYES_MASK = "   bbbeebbbbeebbb   ";
