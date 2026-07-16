@@ -1,0 +1,35 @@
+node_modules/
+dist/
+
+# build/test tool caches
+.vite/
+*.tsbuildinfo
+coverage/
+
+# generated from src/ JSDoc at playground dev/build time — see typedoc.json,
+# playground/scripts/generate-api-reference.mjs
+playground/api-reference.generated.json
+.typedoc-raw.json
+
+# logs
+npm-debug.log*
+*.log
+
+# editor/OS
+.DS_Store
+.vscode/
+.idea/
+
+# local env / secrets
+.env
+.env.local
+
+# personal Claude Code config, except project skills (those are shared/committed)
+.claude/*
+!.claude/skills/
+
+# MCP tool scratch output
+.playwright-mcp/
+
+# personal scratch notes, not repo content
+TODO.personal.md

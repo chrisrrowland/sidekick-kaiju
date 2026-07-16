@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>mascot — vanilla example</title>
+    <link rel="stylesheet" href="../styles/mascot.css" />
+    <style>
+      body {
+        background: #1e1e1e;
+        color: #eee;
+        font-family: system-ui, sans-serif;
+        padding: 2rem;
+      }
+      .row {
+        display: flex;
+        gap: 3rem;
+        align-items: flex-start;
+        margin-top: 2rem;
+      }
+      /* Example of a host app reusing a class it already has, via classNames. */
+      .brand-highlight {
+        color: #ff8a00;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>mascot — vanilla DOM example</h1>
+
+    <div class="row">
+      <div>
+        <p>Default theme</p>
+        <div id="default"></div>
+      </div>
+      <div>
+        <p>CSS variables (--mascot-color / --mascot-eyes-color)</p>
+        <div id="themed"></div>
+      </div>
+      <div>
+        <p>classNames slot map (host's existing class)</p>
+        <div id="classed"></div>
+      </div>
+      <div>
+        <p>animatePose — click to trigger step for 2s</p>
+        <div id="animated" style="cursor: pointer"></div>
+      </div>
+      <div>
+        <p>animatePose — click for two slow-motion blinks</p>
+        <div id="slow-wink" style="cursor: pointer"></div>
+      </div>
+    </div>
+
+    <script type="module">
+      import {
+        getCharacter,
+        getPose,
+        buildRenderModel,
+        renderToElement,
+        applyTheme,
+        animatePose,
+        poseNames,
+      } from "../dist/index.js";
+
+      const character = getCharacter("monster");
+      const P = poseNames(character); // { base: "base", step: "step", ... } — no hardcoded strings
+      const model = buildRenderModel(getPose(character, P.base).frames[0], character.legend);
+
+      renderToElement(model, document.getElementById("default"));
+
+      const themedEl = document.getElementById("themed");
+      renderToElement(model, themedEl);
+      applyTheme(themedEl, { color: "#6cf", slots: { eyes: "#f66" } });
+
+      renderToElement(model, document.getElementById("classed"), {
+        classNames: { eyes: "brand-highlight" },
+      });
+
+      const animatedEl = document.getElementById("animated");
+      const controller = animatePose(character, P.base, animatedEl);
+      animatedEl.addEventListener("click", () => {
+        controller.setPose(P.step, { duration: 2000 });
+      });
+
+      const slowWinkEl = document.getElementById("slow-wink");
+      const slowWinkController = animatePose(character, P.base, slowWinkEl);
+      slowWinkEl.addEventListener("click", () => {
+        // iterations reverts cleanly on a loop boundary; speed 0.5 plays every frame
+        // of this invocation at twice the duration.
+        slowWinkController.setPose(P.wink, { iterations: 2, speed: 0.5 });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+.mascot {
+  --mascot-color: currentColor;
+  --mascot-bg: transparent;
+  --mascot-font-family: "Cascadia Code", "Fira Code", Menlo, Consolas, monospace;
+  --mascot-font-size: 16px;
+  --mascot-line-height: 1.15;
+
+  display: inline-block;
+  background: var(--mascot-bg);
+}
+
+.mascot__art {
+  margin: 0;
+  padding: 0;
+  color: var(--mascot-color);
+  font-family: var(--mascot-font-family);
+  font-size: var(--mascot-font-size);
+  line-height: var(--mascot-line-height);
+  white-space: pre;
+}
+
+/*
+ * Per-slot color overrides, e.g. --mascot-eyes-color, --mascot-body-color.
+ * Wrapped in :where() so these rules carry zero specificity — any class a host
+ * app passes via `classNames` wins outright, with no !important tug-of-war.
+ */
+:where(.mascot__art [data-slot]) {
+  color: var(--mascot-color);
+}
+
+:where(.mascot__art [data-slot="body"]) {
+  color: var(--mascot-body-color, var(--mascot-color));
+}
+
+/*
+ * Eyes are ~3/4-filled corner glyphs (▛/▜) doing double duty as the head's rounded
+ * corner shape — coloring the glyph itself would recolor most of that corner ("eye
+ * shadow"). Instead, the glyph blends into the body color and --mascot-eyes-color
+ * fills the *background*, which only shows through the small missing-corner cutout —
+ * giving a small dot instead of a big colored patch.
+ */
+:where(.mascot__art [data-slot="eyes"]) {
+  color: var(--mascot-body-color, var(--mascot-color));
+  background-color: var(--mascot-eyes-color, transparent);
+}
+
+:where(.mascot__art [data-slot="legs"]) {
+  color: var(--mascot-legs-color, var(--mascot-color));
+}
+
+:where(.mascot__art [data-slot="arms"]) {
+  color: var(--mascot-arms-color, var(--mascot-color));
+}

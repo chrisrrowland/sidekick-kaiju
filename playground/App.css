@@ -1,0 +1,578 @@
+/*
+ * Playground chrome: a simulated terminal window. All type uses the same monospace
+ * stack mascot.css itself defaults to (see --mascot-font-family) — the page's own
+ * voice is the product's voice, not a separate marketing skin.
+ */
+
+:root {
+  --ink: #14100a;
+  --panel: #1c160f;
+  --panel-raised: #241c12;
+  --rule: #3c301d;
+  --rule-bright: #5c4a2c;
+  --phosphor: #ffb238;
+  --phosphor-dim: #8c6a35;
+  --text: #f3e8d2;
+  --text-dim: #a89878;
+  --mono: "Cascadia Code", "Fira Code", Menlo, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.pg-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--mono);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+.pg-page {
+  min-height: 100vh;
+  padding: 2.5rem 1.25rem;
+  display: flex;
+  justify-content: center;
+}
+
+.pg-shell {
+  width: 100%;
+  max-width: 960px;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px -40px rgb(0 0 0 / 0.6);
+}
+
+/* ---------- titlebar ---------- */
+
+.pg-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--rule);
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+
+.pg-dots {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.pg-dots span {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--rule-bright);
+}
+
+.pg-titlebar-path {
+  letter-spacing: 0.02em;
+}
+
+/* ---------- hero ---------- */
+
+.pg-hero {
+  padding: 2rem 1.5rem 1.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.pg-hero-command-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+}
+
+.pg-hero-command {
+  margin: 0;
+  font-size: clamp(1.15rem, 3.4vw, 1.6rem);
+  font-weight: 700;
+  color: var(--phosphor);
+  letter-spacing: -0.01em;
+}
+
+/* Icon-only, so the bracket text affordance (`[ text ]`) other buttons use
+   doesn't apply — same border/hover treatment, just without ::before/::after. */
+.pg-icon-btn {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+}
+
+.pg-btn.pg-icon-btn::before,
+.pg-btn.pg-icon-btn::after {
+  content: none;
+}
+
+.pg-hero-command::before {
+  content: "$ ";
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+.pg-cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 1em;
+  margin-left: 0.15em;
+  background: var(--phosphor);
+  vertical-align: -0.15em;
+  animation: pg-blink 1.05s steps(1) infinite;
+}
+
+@keyframes pg-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.pg-tagline {
+  margin: 0.75rem 0 0;
+  color: var(--text);
+  max-width: 46rem;
+  line-height: 1.5;
+}
+
+.pg-caveat {
+  margin: 0.6rem 0 0;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+/* ---------- main layout ---------- */
+
+.pg-main {
+  display: grid;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  gap: 1.75rem;
+  padding: 1.75rem 1.5rem;
+}
+
+@media (max-width: 760px) {
+  .pg-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pg-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pg-preview-stage {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 2.25rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+}
+
+.pg-snippet {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--panel-raised);
+  padding: 0.85rem 0.9rem;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ---------- controls ---------- */
+
+.pg-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.pg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.pg-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.pg-select {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--text);
+  background: var(--panel-raised);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 0.4rem 0.5rem;
+}
+
+.pg-section {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 0.9rem 1rem 1rem;
+}
+
+.pg-section-title {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--phosphor);
+  margin: 0 0 0.6rem;
+  letter-spacing: 0.02em;
+}
+
+.pg-section-caption {
+  margin: 0.6rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
+.pg-pose-play-controls {
+  display: flex;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+  align-items: center;
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.3rem;
+  border-bottom: 1px dashed var(--rule);
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.pg-pose-play-controls label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.pg-number {
+  width: 4.5rem;
+  /* Native up/down spinner buttons render in the OS's own light theme with no way to
+     restyle them to match the terminal chrome, so they'd stand out as the one
+     unstyled control on the page — drop them and rely on typing/scroll instead. */
+  -moz-appearance: textfield;
+}
+
+.pg-number::-webkit-outer-spin-button,
+.pg-number::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.pg-speed-field {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.pg-pose-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.3rem 0;
+}
+
+.pg-pose-row + .pg-pose-row {
+  border-top: 1px dashed var(--rule);
+}
+
+.pg-pose-name {
+  font-size: 0.85rem;
+  min-width: 5.5rem;
+  color: var(--text);
+}
+
+.pg-btn-group {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.pg-btn {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  padding: 0.3rem 0.55rem;
+  cursor: pointer;
+}
+
+.pg-btn::before {
+  content: "[ ";
+  color: var(--rule-bright);
+}
+.pg-btn::after {
+  content: " ]";
+  color: var(--rule-bright);
+}
+
+.pg-btn:hover:not(:disabled) {
+  border-color: var(--phosphor-dim);
+  color: var(--text);
+}
+
+.pg-btn:disabled {
+  color: var(--phosphor);
+  border-color: var(--phosphor-dim);
+  cursor: default;
+}
+
+.pg-btn:focus-visible,
+.pg-select:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--phosphor);
+  outline-offset: 2px;
+}
+
+.pg-swatch-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.pg-swatch-row input[type="color"] {
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  background: var(--panel-raised);
+}
+
+.pg-range {
+  width: 100%;
+  accent-color: var(--phosphor);
+}
+
+.pg-slot-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.25rem 0;
+  font-size: 0.83rem;
+}
+
+.pg-slot-row label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex: 1;
+}
+
+.pg-checkbox {
+  accent-color: var(--phosphor);
+}
+
+.pg-textarea {
+  width: 100%;
+  margin-top: 0.6rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--panel-raised);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 0.6rem;
+  resize: vertical;
+}
+
+/* ---------- trigger-from-your-code demo ---------- */
+
+.pg-trigger {
+  padding-top: 1rem;
+  margin-top: 0.25rem;
+  border-top: 1px dashed var(--rule);
+}
+
+.pg-trigger code {
+  color: var(--phosphor);
+  font-family: var(--mono);
+}
+
+.pg-status-highlight {
+  color: var(--phosphor);
+  font-weight: 600;
+}
+
+/* ---------- api sheet ---------- */
+
+.pg-apisheet {
+  padding: 1.75rem 1.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+.pg-api-module + .pg-api-module {
+  margin-top: 1.25rem;
+}
+
+.pg-api-module-title {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin: 0 0 0.5rem;
+  font-weight: 400;
+}
+
+.pg-api-entry {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--panel-raised);
+}
+
+.pg-api-entry + .pg-api-entry {
+  margin-top: 0.4rem;
+}
+
+.pg-api-entry-summary {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.6rem;
+  padding: 0.55rem 0.75rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.pg-api-entry-summary::-webkit-details-marker {
+  display: none;
+}
+
+.pg-api-entry-summary::before {
+  content: "▸";
+  color: var(--phosphor-dim);
+  font-size: 0.7rem;
+  margin-right: 0.1rem;
+}
+
+.pg-api-entry[open] > .pg-api-entry-summary::before {
+  content: "▾";
+}
+
+.pg-api-name {
+  font-size: 0.85rem;
+  color: var(--phosphor);
+  flex: 0 0 auto;
+}
+
+.pg-api-brief {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text-dim);
+  flex: 1 1 260px;
+}
+
+.pg-api-body {
+  padding: 0 0.75rem 0.75rem;
+  border-top: 1px dashed var(--rule);
+  margin-top: 0.1rem;
+  padding-top: 0.65rem;
+}
+
+.pg-api-fullsig {
+  margin: 0 0 0.65rem;
+}
+
+.pg-api-desc {
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--text);
+  margin: 0 0 0.65rem;
+}
+
+.pg-api-body .pg-snippet:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- fit-to-box ---------- */
+
+.pg-fitbox {
+  padding: 1.75rem 1.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+.pg-fitbox-grid {
+  display: flex;
+  gap: 1.25rem;
+  margin-top: 1.1rem;
+  flex-wrap: wrap;
+}
+
+.pg-fitbox-card {
+  text-align: center;
+}
+
+.pg-fitbox-box {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--panel-raised);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.pg-fitbox-label {
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+/* ---------- footer ---------- */
+
+.pg-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.5rem;
+  border-top: 1px solid var(--rule);
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
