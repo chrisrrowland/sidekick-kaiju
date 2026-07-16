@@ -33,7 +33,7 @@
     "playground": "vite",
     "prebuild:playground": "npm run docs:api",
     "build:playground": "vite build",
-    "preview:playground": "vite preview",
+    "preview:playground": "vite preview --base=/sidekick-kaiju/",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint ."

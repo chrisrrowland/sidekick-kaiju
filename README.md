@@ -3,11 +3,11 @@
 A themeable terminal-art creature you can drop into any web project — plain HTML/JS, or
 React.
 
-```
- ▐▛███▜▌ 
-▝▜█████▛▘
-  ▘▘ ▝▝  
-```
+<img src=".github/hero.png" alt="mascot — a small terminal-art monster character" width="200" />
+
+<!-- The character art is Unicode block-drawing glyphs (▘▝▖▗▛▜▙▟), which render
+     inconsistently across fonts — see the "Known gotchas" note in CLAUDE.md. A rendered
+     screenshot avoids that on GitHub's markdown viewer instead of an inline code block. -->
 
 ## See it live
 
