@@ -22,16 +22,13 @@ const API_REFERENCE = apiReferenceData as ApiEntry[];
 
 const SLOTS = ["body", "eyes", "legs", "arms"];
 
-// Not on npm yet (see README) — every manager installs the same git ref, just with its
-// own verb. Once this is a real npm package, swap the "github:..." segment for the
-// package name here and the change is done everywhere at once.
 const PACKAGE_MANAGERS = ["npm", "pnpm", "yarn", "bun"] as const;
 type PackageManager = (typeof PACKAGE_MANAGERS)[number];
 const INSTALL_COMMANDS: Record<PackageManager, string> = {
-  npm: "npm install github:chrisrrowland/sidekick-kaiju",
-  pnpm: "pnpm add github:chrisrrowland/sidekick-kaiju",
-  yarn: "yarn add github:chrisrrowland/sidekick-kaiju",
-  bun: "bun add github:chrisrrowland/sidekick-kaiju",
+  npm: "npm install sidekick-kaiju",
+  pnpm: "pnpm add sidekick-kaiju",
+  yarn: "yarn add sidekick-kaiju",
+  bun: "bun add sidekick-kaiju",
 };
 
 const REFERENCE_FONT_SIZE = 100;
@@ -424,7 +421,9 @@ export function App() {
             library, running live.
           </p>
           <p className="pg-caveat">
-            Not on npm yet — installs straight from this repo; see the README for details.
+            <a href="https://www.npmjs.com/package/sidekick-kaiju" target="_blank" rel="noreferrer">
+              View on npm
+            </a>
           </p>
         </div>
 

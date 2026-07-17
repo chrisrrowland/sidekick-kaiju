@@ -195,6 +195,16 @@ body {
   font-size: 0.8rem;
 }
 
+.pg-caveat a {
+  color: var(--phosphor-dim);
+  text-decoration: none;
+}
+
+.pg-caveat a:hover {
+  color: var(--phosphor);
+  text-decoration: underline;
+}
+
 /* ---------- main layout ---------- */
 
 .pg-main {
