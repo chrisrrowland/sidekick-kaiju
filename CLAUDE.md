@@ -64,5 +64,6 @@ actually rendered it.
 
 ## Publishing status
 
-Not yet published to npm. Install via `npm install github:chrisrrowland/sidekick-kaiju`
-— the `prepare` script runs the build automatically for git-based installs.
+Published to npm as `sidekick-kaiju`. Releases are cut by tagging a GitHub Release
+matching `package.json`'s version (e.g. `v0.2.0`) — `.github/workflows/publish.yml`
+builds and publishes it automatically via a scoped `NPM_TOKEN`. Expires every 90 days.

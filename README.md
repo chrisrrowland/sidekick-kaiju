@@ -31,14 +31,9 @@ Opens at http://localhost:5173 with hot reload.
 
 ## Install
 
-Not yet published to npm. For now, install directly from this repo (a `prepare` script
-builds `dist/` automatically when installed this way):
-
 ```sh
-npm install github:chrisrrowland/sidekick-kaiju
+npm install sidekick-kaiju
 ```
-
-Once published, this section will show `npm install <package-name>` instead.
 
 `sidekick-kaiju` has no runtime dependencies. `sidekick-kaiju/react` treats React as an
 optional peer dependency — only install it if you use the React entry point.
