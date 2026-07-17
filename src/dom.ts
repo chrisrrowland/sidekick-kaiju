@@ -8,6 +8,12 @@ export interface RenderOptions {
   classNames?: ClassNames;
 }
 
+/** Falls back to this when `animatePose`'s `maxQueueLength` isn't given — high enough
+ * that no real animation sequence should ever hit it, low enough to catch a runaway
+ * event source (a chatty websocket, a bug in the caller) before its queue silently grows
+ * unbounded. Pass `Infinity` to opt out of the cap entirely. */
+export const DEFAULT_MAX_QUEUE_LENGTH = 1000;
+
 function escapeHtml(text: string): string {
   return text
     .replace(/&/g, "&amp;")
@@ -113,13 +119,48 @@ export interface SetPoseOptions {
    * `duration` or `iterations`) resets speed back to 1 for the pose it reverts to.
    */
   speed?: number;
+  /**
+   * Wait for the currently-playing timed pose (one started with `duration` or
+   * `iterations`) to finish before switching, instead of interrupting it. Queued poses
+   * play in the order they were queued (FIFO), each keeping its own options, up to
+   * `animatePose`'s `maxQueueLength` (see `AnimatePoseOptions`). If nothing is currently
+   * mid-animation (holding indefinitely, or already back at the base pose), plays
+   * immediately, same as a normal `setPose`. A plain (non-queued) `setPose` call always
+   * clears the whole queue.
+   */
+  queue?: boolean;
+}
+
+/** One entry waiting in a `PoseController`'s queue — the pose name plus whatever
+ * options its `setPose(name, { queue: true, ... })` call was given. */
+export interface QueuedPose {
+  name: string;
+  options?: SetPoseOptions;
+}
+
+export interface AnimatePoseOptions extends RenderOptions {
+  /**
+   * Safety cap on how many poses can be waiting in the queue at once (see
+   * `SetPoseOptions.queue`) — once hit, further `{ queue: true }` calls are silently
+   * dropped rather than growing the queue further. Defaults to `DEFAULT_MAX_QUEUE_LENGTH`
+   * (1000). Pass `Infinity` to opt out of the cap entirely. Check `controller.getQueued()
+   * .length` before queueing if you want to throttle proactively instead of relying on
+   * this cap.
+   */
+  maxQueueLength?: number;
 }
 
 export interface PoseController {
-  /** Switches to a pose immediately; a pending revert from a previous `setPose` call
-   * (if any) is replaced, not stacked. */
+  /** Switches to a pose immediately (or waits behind the current one with
+   * `{ queue: true }`); a pending revert from a previous non-queued `setPose` call is
+   * replaced, not stacked. */
   setPose(name: string, options?: SetPoseOptions): void;
-  /** Stops frame/revert timers. Does not clear the target's current contents. */
+  /** The poses waiting behind the current one, oldest (next up) first — each with the
+   * options its own `{ queue: true }` call was given. Empty if nothing's queued. Useful
+   * for a host app that wants to show "up next" UI. */
+  getQueued(): QueuedPose[];
+  /** Stops frame/revert timers and clears the queue. Does not clear the target's current
+   * contents. */
   stop(): void;
 }
 
@@ -136,6 +177,9 @@ export interface PoseController {
  * const controller = animatePose(getCharacter("monster"), "base", document.getElementById("app"));
  * controller.setPose("step", { duration: 2000 }); // auto-reverts to "base" after 2s
  * controller.setPose("wink", { iterations: 2, speed: 0.5 }); // two slow-motion blinks
+ * controller.setPose("celebrate", { queue: true, iterations: 1 }); // waits for wink
+ * controller.setPose("chomp", { queue: true, iterations: 1 }); // waits for celebrate too
+ * controller.getQueued(); // [{ name: "celebrate", ... }, { name: "chomp", ... }]
  * controller.stop(); // when done
  * ```
  *
@@ -145,8 +189,9 @@ export function animatePose(
   character: Character,
   poseName: string,
   target: HTMLElement,
-  options: RenderOptions = {},
+  options: AnimatePoseOptions = {},
 ): PoseController {
+  const { maxQueueLength = DEFAULT_MAX_QUEUE_LENGTH, ...renderOptions } = options;
   const basePose = poseName;
   let currentPoseName = poseName;
   let currentSpeed = 1;
@@ -154,9 +199,10 @@ export function animatePose(
   let currentModels: RenderModel[] = buildPoseRenderModels(getPose(character, currentPoseName), character.legend);
   let frameTimer: ReturnType<typeof setTimeout> | undefined;
   let revertTimer: ReturnType<typeof setTimeout> | undefined;
+  let queued: QueuedPose[] = [];
 
   function render() {
-    renderToElement(currentModels[frameIndex], target, options);
+    renderToElement(currentModels[frameIndex], target, renderOptions);
   }
 
   function scheduleNextFrame() {
@@ -172,9 +218,12 @@ export function animatePose(
     }, duration / currentSpeed);
   }
 
-  function setPose(name: string, setPoseOptions?: SetPoseOptions): void {
+  // The actual pose switch, shared by immediate setPose calls and by a queued pose
+  // taking over once the pose it was waiting behind reverts.
+  function applyPose(name: string, setPoseOptions?: SetPoseOptions): void {
     clearTimeout(frameTimer);
     clearTimeout(revertTimer);
+    revertTimer = undefined;
     currentPoseName = name;
     currentModels = buildPoseRenderModels(getPose(character, currentPoseName), character.legend);
     currentSpeed = setPoseOptions?.speed ?? 1;
@@ -185,8 +234,32 @@ export function animatePose(
       ? getIterationsDuration(character, name, setPoseOptions.iterations, currentSpeed)
       : setPoseOptions?.duration;
     if (duration) {
-      revertTimer = setTimeout(() => setPose(basePose), duration);
+      revertTimer = setTimeout(onRevert, duration);
     }
+  }
+
+  // Fires when a timed pose's duration/iterations elapse — hands off to the next queued
+  // pose (FIFO), or falls back to the original revert-to-base behavior once the queue's
+  // empty.
+  function onRevert(): void {
+    const next = queued.shift();
+    if (next) {
+      applyPose(next.name, next.options);
+    } else {
+      applyPose(basePose);
+    }
+  }
+
+  function setPose(name: string, setPoseOptions?: SetPoseOptions): void {
+    if (setPoseOptions?.queue && revertTimer) {
+      // Past the cap, the queue attempt is silently dropped — check `getQueued().length`
+      // before queueing if a caller wants to throttle proactively instead.
+      if (queued.length >= maxQueueLength) return;
+      queued.push({ name, options: setPoseOptions });
+      return;
+    }
+    queued = [];
+    applyPose(name, setPoseOptions);
   }
 
   render();
@@ -194,9 +267,13 @@ export function animatePose(
 
   return {
     setPose,
+    getQueued() {
+      return [...queued];
+    },
     stop() {
       clearTimeout(frameTimer);
       clearTimeout(revertTimer);
+      queued = [];
     },
   };
 }
