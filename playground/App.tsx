@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { Sidekick, useSidekickPose } from "sidekick-kaiju/react";
+import type { QueuedSidekickPose } from "sidekick-kaiju/react";
 import { characters, poseNames } from "sidekick-kaiju";
 import apiReferenceData from "./api-reference.generated.json";
 import "./App.css";
@@ -142,7 +143,8 @@ function vanillaUsageSnippet(props: SnippetProps): string {
       useHostClass ? `, {\n  classNames: { ${hostClassSlot}: "your-class" },\n}` : ""
     });`,
     "",
-    `// controller.setPose(name, { duration?, iterations?, speed? }) to switch poses later`,
+    `// controller.setPose(name, { duration?, iterations?, speed?, queue? }) to switch poses later`,
+    `// controller.getQueued() -> ordered array of poses waiting behind the current one`,
     `// controller.stop() when done`,
     `// server-side? animatePose needs a live DOM + timers — for SSR, call`,
     `// buildRenderModel + renderToHTMLString directly instead`,
@@ -156,7 +158,7 @@ function vanillaUsageSnippet(props: SnippetProps): string {
 const TRIGGER_SNIPPET = [
   `import { Sidekick, useSidekickPose } from "sidekick-kaiju/react";`,
   "",
-  `const [pose, setPose, speed] = useSidekickPose("base", "monster");`,
+  `const [pose, setPose, speed, queuedPoses] = useSidekickPose("base", "monster");`,
   "",
   `// Anywhere in your own code — a websocket handler, a state machine,`,
   `// any event source. setPose isn't tied to a click.`,
@@ -169,6 +171,19 @@ const TRIGGER_SNIPPET = [
   `    setPose("wink", { iterations: 2, speed: 0.5 }); // two slow blinks`,
   `  }`,
   `});`,
+  "",
+  `// Two signals landing close together would otherwise have the second`,
+  `// cut the first off mid-animation — { queue: true } waits instead, and`,
+  `// queues stack (FIFO) rather than replacing each other, so nothing`,
+  `// queued gets dropped by a later signal arriving before its turn:`,
+  `myEventEmitter.on("status", (status) => {`,
+  `  setPose("celebrate", { iterations: 1, queue: true });`,
+  `});`,
+  "",
+  `// queuedPoses is [{ name: "celebrate", options: {...} }] from right after`,
+  `// that call until it takes over — show your own "up next" badge with it,`,
+  `// no polling required. Each entry keeps its own options, so a badge can`,
+  `// show e.g. "celebrate ×1" even while a totally different pose plays now.`,
   "",
   `<Sidekick character="monster" pose={pose} speed={speed} />`,
 ].join("\n");
@@ -250,6 +265,16 @@ function defaultHostClassCss(slot: string): string {
   ].join("\n");
 }
 
+/** Compact "up next" label for a queued entry — e.g. `wink ×2 @0.5×` — showing the
+ * options that entry's own `{ queue: true }` call was given, not just its name, since a
+ * queued pose can carry very different playback settings than what's currently showing. */
+function formatQueuedPose({ name, options }: QueuedSidekickPose): string {
+  const parts = [name];
+  if (options?.iterations) parts.push(`×${options.iterations}`);
+  if (options?.speed && options.speed !== 1) parts.push(`@${options.speed}×`);
+  return parts.join(" ");
+}
+
 function ApiEntryRow({ entry }: { entry: ApiEntry }) {
   return (
     <details className="pg-api-entry">
@@ -291,7 +316,7 @@ function FooterSidekick() {
 
 export function App() {
   const [character, setCharacter] = useState("monster");
-  const [pose, setPose, activeSpeed] = useSidekickPose("base", character);
+  const [pose, setPose, activeSpeed, queuedPoses] = useSidekickPose("base", character);
   const [iterationsInput, setIterationsInput] = useState(2);
   const [speedInput, setSpeedInput] = useState(0.5);
   const posesForCharacter = Object.keys(characters[character].poses);
@@ -521,7 +546,18 @@ export function App() {
             </div>
 
             <div className="pg-section">
-              <span className="pg-section-title">[ pose ] — current: {pose}</span>
+              <span className="pg-section-title">
+                [ pose ] — current: {pose}
+                {queuedPoses.length > 0 && (
+                  <>
+                    {" "}
+                    · queued:{" "}
+                    <span className="pg-status-highlight">
+                      {queuedPoses.map(formatQueuedPose).join(" → ")}
+                    </span>
+                  </>
+                )}
+              </span>
               <div className="pg-pose-play-controls">
                 <label>
                   iterations
@@ -581,6 +617,19 @@ export function App() {
                         >
                           play
                         </button>
+                        <button
+                          type="button"
+                          className="pg-btn"
+                          onClick={() =>
+                            setPose(name, {
+                              iterations: iterationsInput,
+                              speed: speedInput,
+                              queue: true,
+                            })
+                          }
+                        >
+                          queue
+                        </button>
                       </>
                     )}
                   </div>
@@ -591,7 +640,18 @@ export function App() {
                 <strong>2s</strong> reverts automatically after a fixed delay.{" "}
                 <strong>play</strong> runs it for the iterations/speed set above, then
                 reverts cleanly on a loop boundary — set iterations to 2 and speed to 0.5
-                for two slow-motion blinks.
+                for two slow-motion blinks. <strong>queue</strong> is like play, but if
+                another timed pose is still running it waits its turn instead of cutting
+                it off — click <strong>queue</strong> on several poses in a row (with
+                different iterations/speed each time, even) and they play back-to-back in
+                the order you clicked, each with its own settings — try queueing{" "}
+                <strong>step</strong> a few times with increasing speed for a "revving up"
+                effect. Everything waiting shows up next to <strong>current</strong> above
+                as <strong>queued</strong> — that's <code>useSidekickPose</code>'s 4th
+                returned value, the full ordered list (
+                <code>controller.getQueued()</code> for the vanilla{" "}
+                <code>animatePose</code> controller), there for a host app that wants to
+                show its own "up next" indicator.
               </p>
             </div>
 
