@@ -1,6 +1,6 @@
 {
   "name": "sidekick-kaiju",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A themeable terminal-art monster sidekick for any web project — plain JS or React.",
   "type": "module",
   "license": "MIT",
