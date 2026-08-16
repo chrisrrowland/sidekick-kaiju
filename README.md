@@ -1,5 +1,7 @@
 # SIDEKICK
 
+[![npm version](https://img.shields.io/npm/v/sidekick-kaiju.svg)](https://www.npmjs.com/package/sidekick-kaiju)
+
 *Sidekick Is Dynamic Entity Kit Crafting Kaiju*
 
 A themeable terminal-art creature you can drop into any web project — plain HTML/JS, or
